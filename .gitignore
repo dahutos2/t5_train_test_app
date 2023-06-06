@@ -31,5 +31,4 @@ Thumbs.db
 
 # Other
 **/params.json
-**/model_word2vec/**
 **/model_fast_text/**
