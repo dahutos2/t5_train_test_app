@@ -4,6 +4,7 @@ from transformers import (
     T5ForConditionalGeneration,
 )
 import gensim
+import gdown
 from typing import Tuple
 import zipfile
 import datetime
@@ -29,14 +30,7 @@ __WORD2_VEC_PATH = os.path.join(
     ),
 )
 
-__FAST_TEXT_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(sys.argv[0])),
-    os.path.join(
-        "input",
-        "model_fast_text",
-        "model.vec",
-    ),
-)
+__FAST_TEXT_FILE_ID = "1_uyQpDsHqDpgACphnHVC_CP1_g1kx8CZ"
 
 
 def save(
@@ -189,7 +183,7 @@ def get_keyed_vectors() -> gensim.models.KeyedVectors:
     # 単語の類似度算出用モデルをロードする
     with st.spinner("評価用モデルを読み込み中..."):
         if __checked_is_fast_text:
-            return __get_keyed_vectors(__FAST_TEXT_PATH)
+            return __get_keyed_vectors(__FAST_TEXT_FILE_ID)
         else:
             return __get_keyed_vectors(__WORD2_VEC_PATH)
 
@@ -197,12 +191,12 @@ def get_keyed_vectors() -> gensim.models.KeyedVectors:
 def __get_keyed_vectors(model_path: str) -> gensim.models.KeyedVectors:
     global __keyed_vectors
     if __keyed_vectors == None:
-        if model_path == __FAST_TEXT_PATH:
+        if model_path == __FAST_TEXT_FILE_ID:
             __keyed_vectors = __get_fast_text()
         else:
             __keyed_vectors = __get_word2_vec()
     else:
-        if not __current_is_fast_text and model_path == __FAST_TEXT_PATH:
+        if not __current_is_fast_text and model_path == __FAST_TEXT_FILE_ID:
             __keyed_vectors = __get_fast_text()
         if __current_is_fast_text and model_path == __WORD2_VEC_PATH:
             __keyed_vectors = __get_word2_vec()
@@ -219,7 +213,17 @@ def __get_word2_vec():
 def __get_fast_text():
     global __current_is_fast_text
     __current_is_fast_text = True
-    return gensim.models.KeyedVectors.load_word2vec_format(
-        __FAST_TEXT_PATH,
-        binary=False,
-    )
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        download_path = os.path.join(tempdir, "model.vec")
+        # ファイルをダウンロード
+        gdown.download(
+            f"https://drive.google.com/uc?id={__FAST_TEXT_FILE_ID}",
+            download_path,
+            quiet=False,
+        )
+
+        return gensim.models.KeyedVectors.load_word2vec_format(
+            download_path,
+            binary=False,
+        )
