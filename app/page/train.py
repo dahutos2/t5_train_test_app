@@ -42,15 +42,15 @@ class __StreamlitProgressCallback(TrainerCallback):
 
 
 def show() -> None:
-    """この関数は、ユーザーからの入力を受け取り、それに基づいてモデルの訓練を行います。
+    """この関数は、ユーザーからの入力を受け取り、それに基づいてモデルの学習を行います。
 
     具体的には、以下の情報をユーザーから受け取ります：
 
         接頭辞: モデルに使用する、接頭辞。
 
-        訓練エポック数: 全ての訓練データがネットワークを通過する回数。
+        学習エポック数: 全ての学習データがネットワークを通過する回数。
 
-        デバイスごとの訓練バッチサイズ: 各デバイス（GPUまたはCPU）での訓練バッチサイズ。
+        デバイスごとの学習バッチサイズ: 各デバイス（GPUまたはCPU）での学習バッチサイズ。
 
         デバイスごとの評価バッチサイズ: 各デバイス（GPUまたはCPU）での評価バッチサイズ。
 
@@ -62,7 +62,7 @@ def show() -> None:
 
         勾配蓄積ステップ数: バッチサイズを事実上増加させるために使用される勾配蓄積ステップ数。
 
-    これらの情報を受け取った後、ユーザーからCSVファイルがアップロードされると、受け取ったパラメータを使用してモデルの訓練が開始されます。"""
+    これらの情報を受け取った後、ユーザーからCSVファイルがアップロードされると、受け取ったパラメータを使用してモデルの学習が開始されます。"""
     st.subheader("学習")
 
     # ユーザーからのハイパーパラメータの入力を受け取る
@@ -70,7 +70,7 @@ def show() -> None:
 
     is_succeeded, model_path = ml.get_model_path(default_param["model_path"])
 
-    is_checked = st.checkbox("訓練を行わない")
+    is_checked = st.checkbox("学習を行わない")
 
     if is_checked:
         __execute_save(is_succeeded, model_path)
@@ -87,26 +87,26 @@ def __set_hyper_parameters(
     default_param: Dict[str, Any], model_path: str
 ) -> Dict[str, Any]:
     num_train_epochs = st.number_input(
-        "訓練エポック数を入力してください。",
+        "学習エポック数を入力してください。",
         min_value=1,
         max_value=100,
         value=default_param["num_train_epochs"],
         step=1,
         help="""
-        \nエポックとは、全ての訓練データがネットワークを通過する回数を指します。
+        \nエポックとは、全ての学習データがネットワークを通過する回数を指します。
         \nこの値はモデルが過学習しないようにするために調整する必要があります。
         \n一般的には、数エポック（2〜10など）から始め、
         \n過学習の兆候を見つけるために検証セットのパフォーマンスを監視します。
         """,
     )
     per_device_train_batch_size = st.number_input(
-        "デバイスごとの訓練バッチサイズを入力してください。",
+        "デバイスごとの学習バッチサイズを入力してください。",
         min_value=1,
         max_value=100,
         value=default_param["per_device_train_batch_size"],
         step=1,
         help="""
-        \n各デバイス（GPUまたはCPU）での訓練バッチサイズです。
+        \n各デバイス（GPUまたはCPU）での学習バッチサイズです。
         \nバッチサイズとは、同時にネットワークを通過するトレーニングデータの数を指します。
         \nこの値は、利用可能なメモリに応じて適切に調整する必要があります。
         \n一般的には、8から32の範囲が適切な値とされています。
@@ -120,8 +120,8 @@ def __set_hyper_parameters(
         step=1,
         help="""
         \n各デバイス（GPUまたはCPU）での評価バッチサイズです。
-        \n訓練バッチサイズ同様、利用可能なメモリに応じて調整する必要があります。
-        \n一般的には、訓練バッチサイズと同等またはそれ以上の値が選択されます。
+        \n学習バッチサイズ同様、利用可能なメモリに応じて調整する必要があります。
+        \n一般的には、学習バッチサイズと同等またはそれ以上の値が選択されます。
         """,
     )
     warmup_steps = st.number_input(
@@ -132,8 +132,8 @@ def __set_hyper_parameters(
         step=1,
         help="""
         \nウォームアップステップの数は、学習率スケジューリングに影響します。
-        \n訓練の初期段階で学習率を徐々に上げることで、訓練の安定性を向上させることができます。
-        \n適切な値は訓練ステップの総数の一部で、
+        \n学習の初期段階で学習率を徐々に上げることで、学習の安定性を向上させることができます。
+        \n適切な値は学習ステップの総数の一部で、
         \n一般的にはトータルステップの10%程度が指定されます。
         """,
     )
@@ -169,7 +169,7 @@ def __set_hyper_parameters(
         step=1,
         help="""
         \n勾配累積ステップ数は、バッチサイズを事実上増加させるために使用されます。
-        \nこれにより、ハードウェアのメモリ制限に直面している場合でも、大きなバッチで訓練を行うことができます。
+        \nこれにより、ハードウェアのメモリ制限に直面している場合でも、大きなバッチで学習を行うことができます。
         \n適切な値はハードウェアのメモリとバッチサイズに依存します。
         \n例えば、バッチサイズが8で、メモリがそれ以上のバッチサイズを扱うことができない場合、
         \n勾配累積ステップ数を2に設定することで、実質的なバッチサイズを16にすることができます。
@@ -200,7 +200,7 @@ def __execute_train(
     if (
         is_succeeded
         and upload_file is not None
-        and st.button("訓練", disabled=settings.is_deployed)
+        and st.button("学習", disabled=settings.is_deployed)
     ):
         param.set_train_param(params)
         callback = __StreamlitProgressCallback()
@@ -210,13 +210,13 @@ def __execute_train(
 
         # トークナイザとモデルの準備
         tokenizer, model = ml.get_load_model(model_path)
-        with st.spinner("訓練中..."):
+        with st.spinner("学習中..."):
             df = pd.read_csv(upload_file)
             binary = train.execute(df, callback, tokenizer, model)
             # 活性化
             log.change_enabled(True)
 
-        st.success("訓練が終了しました！")
+        st.success("学習が終了しました！")
         # プログレスバーを消す
         callback.progress_bar.empty()
 

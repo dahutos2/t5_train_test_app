@@ -9,10 +9,10 @@ __similarity_list = []
 
 
 def show() -> None:
-    """評価を行うための関数です。
+    """検証を行うための関数です。
 
-    モデルの読み込み、CSVファイルのアップロード、評価の実行、結果の表示などを行います。"""
-    st.subheader("評価")
+    モデルの読み込み、CSVファイルのアップロード、検証の実行、結果の表示などを行います。"""
+    st.subheader("検証")
 
     ml.set_is_fast_text()
 
@@ -53,7 +53,7 @@ def show() -> None:
             # 活性化
             log.change_enabled(True)
 
-        st.success("評価が終了しました！")
+        st.success("検証が終了しました！")
         # プログレスバーを消す
         progress_bar.empty()
 

@@ -26,7 +26,7 @@ from share import model as ml
 
 class __ModelTrainDataset(Dataset):
     """
-    モデルの訓練のためのデータセットです。
+    モデルの学習のためのデータセットです。
 
     与えられたデータフレームから、特定の最大長でトークン化された入力と出力を生成します。
 
@@ -79,7 +79,7 @@ class __ModelTrainDataset(Dataset):
 
 class __LoggingCallback(TrainerCallback):
     """
-    訓練中の情報をログに記録するためのコールバック。
+    学習中の情報をログに記録するためのコールバック。
 
     このコールバックは、各ステップの終了時に情報をログに記録します。
     """
@@ -153,10 +153,10 @@ def execute(
     tokenizer: T5Tokenizer,
     model: T5ForConditionalGeneration,
 ) -> bytes:
-    """与えられた訓練データから、訓練と評価を行います。訓練結果のモデルとトークナイザは指定されたパスに保存されます。
+    """与えられた学習データから、学習と評価を行います。学習結果のモデルとトークナイザは指定されたパスに保存されます。
 
     引数:
-        df (any): 訓練用のデータのDataFrame
+        df (any): 学習用のデータのDataFrame
 
         callback (Callable): 進行状況を報告するためのコールバック関数
 
@@ -164,10 +164,10 @@ def execute(
 
         model (T5ForConditionalGeneration): T5のモデル
     """
-    # 訓練評価用データ
+    # 学習評価用データ
     train_df, eval_df = train_test_split(df, test_size=0.2)
 
-    # 訓練パラメータを取得
+    # 学習パラメータを取得
     params = param.get_train_param()
 
     # データセットの作成
@@ -182,7 +182,7 @@ def execute(
         * params["num_train_epochs"],
     )
     with tempfile.TemporaryDirectory() as tmp_dir:
-        # 訓練の設定
+        # 学習の設定
         training_args = Seq2SeqTrainingArguments(
             logging_steps=1,
             predict_with_generate=True,
@@ -218,19 +218,19 @@ def execute(
             compute_metrics=train_helper.compute_metrics,
         )
 
-        # 訓練
-        log.logger.info("訓練を開始します...")
+        # 学習
+        log.logger.info("学習を開始します...")
         train_result = trainer.train()
 
-    # 訓練完了時のメトリクスの整形
+    # 学習完了時のメトリクスの整形
     result_message = ", ".join(
         f"{key}: {value}" for key, value in train_result.metrics.items()
     )
 
-    # 訓練完了時のメトリクスを表示
+    # 学習完了時のメトリクスを表示
     log.logger.info(result_message)
 
     log.logger.info("学習が終了しました!")
 
-    # 訓練が終了したモデルとトークナイザを保存
+    # 学習が終了したモデルとトークナイザを保存
     return ml.save(model, tokenizer)

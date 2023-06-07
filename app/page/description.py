@@ -11,17 +11,23 @@ __executable_path = os.path.abspath(sys.argv[0])
 # 実行ファイルのディレクトリを取得
 __executable_dir = os.path.dirname(__executable_path)
 
-# アプリの説明を保存するファイルのパス
-__MARKDOWN_FILE = os.path.join(__executable_dir, "input", "description.md")
+# 説明を保存するフォルダのパス
+__DESCRIPTION_FOLDER = os.path.join(__executable_dir, "input", "description")
 
-# アプリの説明のSCSSを保存するファイルのパス
-__MARKDOWN_FILE_SCSS = os.path.join(__executable_dir, "input", "description.scss")
+# 説明のSCSSを保存するファイルパス
+__DESCRIPTION_FILE_SCSS = os.path.join(__DESCRIPTION_FOLDER, "description.scss")
 
+# アプリ説明を保存するファイルパス
+_DESCRIPTION_APP_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_app.md")
 
-def __get_image_as_base64_string(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode()
+# モデル説明を保存するファイルパス
+_DESCRIPTION_MODEL_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_model.md")
 
+# T5説明を保存するファイルパス
+_DESCRIPTION_T5_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_t5.md")
+
+# 専門用語説明を保存するファイルパス
+_DESCRIPTION_DIC_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_dic.md")
 
 # 画像ファイルのパス
 __IMAGES_PATH = os.path.join(__executable_dir, "input", "images")
@@ -29,23 +35,37 @@ __IMAGES_PATH = os.path.join(__executable_dir, "input", "images")
 
 def show():
     """.mdファイルをcssを適用して表示する"""
-
-    styled_html, css = __get_file_data(__MARKDOWN_FILE, __MARKDOWN_FILE_SCSS)
+    # CSSファイルを読み込む
+    scss = __file_to_text(__DESCRIPTION_FILE_SCSS)
+    # SCSSをCSSにコンパイル
+    css = sass.compile(string=scss)
 
     # CSSを適用する
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
+    # アプリ説明
+    __show_app_file()
+
+    # モデル説明
+    __show_model_file()
+
+    # T5説明
+    __show_t5_file()
+
+    # 専門用語説明
+    __show_dic_file()
+
+
+def __show_app_file() -> None:
+    md_text = __file_to_text(_DESCRIPTION_APP_FILE)
+    html = __convert_to_html(md_text)
+
     # StreamlitでHTMLを表示
-    st.markdown(styled_html, unsafe_allow_html=True)
+    st.markdown(html, unsafe_allow_html=True)
 
 
-@st.cache_data(
-    show_spinner="アプリ説明ファイルを読み込み中...",
-    max_entries=1,
-)
-def __get_file_data(md_path, scss_path):
-    # Markdownファイルを読み込む
-    md_text = __file_to_text(md_path)
+def __show_model_file() -> None:
+    md_text = __file_to_text(_DESCRIPTION_MODEL_FILE)
 
     # 画像のパスを変換
     convert_image_dict = {
@@ -56,6 +76,29 @@ def __get_file_data(md_path, scss_path):
     for original, replacement in convert_image_dict.items():
         md_text = md_text.replace(original, replacement)
 
+    html = __convert_to_html(md_text)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def __show_t5_file() -> None:
+    md_text = __file_to_text(_DESCRIPTION_T5_FILE)
+    html = __convert_to_html(md_text)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def __show_dic_file() -> None:
+    md_text = __file_to_text(_DESCRIPTION_DIC_FILE)
+    html = __convert_to_html(md_text)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def __convert_to_html(md_text: str) -> str:
     # MarkdownをHTMLに変換
     html = markdown.markdown(
         md_text,
@@ -68,11 +111,6 @@ def __get_file_data(md_path, scss_path):
         ],
     )
 
-    # CSSファイルを読み込む
-    scss = __file_to_text(scss_path)
-    # SCSSをCSSにコンパイル
-    css = sass.compile(string=scss)
-
     # CSSを適用したHTMLを生成
     styled_html = f"""
     <div class="description">
@@ -80,10 +118,19 @@ def __get_file_data(md_path, scss_path):
     </div>
     """
 
-    return styled_html, css
+    return styled_html
 
 
-def __file_to_text(file_path):
+@st.cache_data(
+    show_spinner=False,
+    max_entries=5,
+)
+def __file_to_text(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as file:
         text = file.read()
     return text
+
+
+def __get_image_as_base64_string(image_path: str) -> str:
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()

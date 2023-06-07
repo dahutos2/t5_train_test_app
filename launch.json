@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "T5モデルの訓練・評価アプリ",
+            "name": "T5モデルの学習・検証アプリ",
             "type": "python",
             "request": "launch",
             "program": "~/opt/anaconda3/envs/train_app_env/bin/streamlit",

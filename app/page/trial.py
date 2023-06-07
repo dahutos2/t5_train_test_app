@@ -1,7 +1,6 @@
 import streamlit as st
 import re
 import pandas as pd
-from io import StringIO
 from logic import trial
 from share import param
 from share import log
@@ -10,8 +9,8 @@ from share import model as ml
 
 def show() -> None:
     """このメソッドは、指定された入力文字列またはCSVファイルに含まれる複数の入力文字列を元に出力を表示します。"""
-    st.subheader("お試し")
-    option = st.selectbox("試す方法を選択して下さい。", ("T5", "Word2Vec"))
+    st.subheader("試験")
+    option = st.selectbox("試験内容を選択して下さい。", ("T5", "Word2Vec"))
     if option == "T5":
         __trial_t5()
     elif option == "Word2Vec":

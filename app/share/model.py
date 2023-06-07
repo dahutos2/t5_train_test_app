@@ -148,7 +148,7 @@ def get_binary_save_model(
 
 
 @st.cache_resource(
-    show_spinner="訓練後モデルを読み込み中...",
+    show_spinner="学習後モデルを読み込み中...",
     ttl=datetime.timedelta(hours=6),
     max_entries=1,
 )
@@ -167,7 +167,7 @@ def set_is_fast_text() -> None:
     global __checked_is_fast_text
     current_checked = __checked_is_fast_text
     is_checked = st.checkbox(
-        "評価にFastTextを使用する",
+        "検証にFastTextを使用する",
         value=current_checked,
         help="デフォルトでは、Word2Vecを使用します。",
     )

@@ -9,10 +9,10 @@ from share import settings
 
 def main():
     # アプリのタイトル
-    st.title("T5モデルの訓練、評価アプリ")
+    st.title("T5モデルの学習、検証アプリ")
 
     # ナビゲーションバーの作成
-    option = log.handler.nav_bar.selectbox("どの機能を使用しますか？", ("説明", "訓練", "評価", "お試し"))
+    option = log.handler.nav_bar.selectbox("どの機能を使用しますか？", ("説明", "学習", " 検証", "試験"))
 
     # 初期化
     log.handler.restore()
@@ -23,14 +23,14 @@ def main():
         # 説明
         if option == "説明":
             description.show()
-        # 訓練
-        elif option == "訓練":
+        # 学習
+        elif option == "学習":
             train.show()
-        # 評価
-        elif option == "評価":
+        # 検証
+        elif option == "検証":
             test.show()
-        # お試し
-        elif option == "お試し":
+        # 試験
+        elif option == "試験":
             trial.show()
     except Exception as e:
         # ボタンを活性化

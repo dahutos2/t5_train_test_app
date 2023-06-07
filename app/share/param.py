@@ -28,14 +28,14 @@ __default_params = {
 
 
 def get_train_param() -> Dict[str, Any]:
-    """このメソッドは、訓練パラメータを取得します。
+    """このメソッドは、学習パラメータを取得します。
 
-    訓練パラメータは、定義済みのファイル(PARAMS_FILE)から読み込まれます。
+    学習パラメータは、定義済みのファイル(PARAMS_FILE)から読み込まれます。
 
     PARAMS_FILEが存在しない場合は、デフォルトのパラメータが返されます。
 
     戻り値:
-        Dict[str, Any]: 訓練パラメータを保持する辞書
+        Dict[str, Any]: 学習パラメータを保持する辞書
     """
     # PARAMS_FILEが存在すれば読み込む
     if os.path.exists(__PARAMS_FILE):
@@ -47,12 +47,12 @@ def get_train_param() -> Dict[str, Any]:
 
 
 def set_train_param(params: Dict[str, Any]) -> None:
-    """このメソッドは、訓練パラメータを設定します。
+    """このメソッドは、学習パラメータを設定します。
 
     設定したパラメータは、定義済みのファイル(PARAMS_FILE)に書き込まれます。
 
     引数:
-        params (Dict[str, Any]): 設定する訓練パラメータを保持する辞書
+        params (Dict[str, Any]): 設定する学習パラメータを保持する辞書
     """
     json_str = json.dumps(params)
     with open(__PARAMS_FILE, "w") as f:
