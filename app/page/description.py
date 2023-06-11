@@ -26,6 +26,9 @@ _DESCRIPTION_MODEL_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_model.
 # T5説明を保存するファイルパス
 _DESCRIPTION_T5_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_t5.md")
 
+# T5数学説明を保存するファイルパス
+_DESCRIPTION_MATH_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_math.md")
+
 # 専門用語説明を保存するファイルパス
 _DESCRIPTION_DIC_FILE = os.path.join(__DESCRIPTION_FOLDER, "description_dic.md")
 
@@ -51,6 +54,9 @@ def show():
 
     # T5説明
     __show_t5_file()
+
+    # T5数学説明
+    __show_math_file()
 
     # 専門用語説明
     __show_dic_file()
@@ -88,6 +94,17 @@ def __show_t5_file() -> None:
 
     # StreamlitでHTMLを表示
     st.markdown(html, unsafe_allow_html=True)
+
+
+def __show_math_file() -> None:
+    md_text = __file_to_text(_DESCRIPTION_MATH_FILE)
+
+    start_md_text = "\n### 数式一覧\n"
+    html = __convert_to_html(start_md_text)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(md_text)
 
 
 def __show_dic_file() -> None:
