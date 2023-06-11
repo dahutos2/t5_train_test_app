@@ -12,7 +12,7 @@ def main():
     st.title("T5モデルの学習、検証アプリ")
 
     # ナビゲーションバーの作成
-    option = log.handler.nav_bar.selectbox("どの機能を使用しますか？", ("説明", "学習", " 検証", "試験"))
+    option = log.handler.nav_bar.selectbox("どの機能を使用しますか？", ("説明", "学習", "検証", "試験"))
 
     # 初期化
     log.handler.restore()
