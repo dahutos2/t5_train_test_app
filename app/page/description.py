@@ -144,7 +144,7 @@ def __show_math_file() -> None:
 
     # StreamlitでHTMLを表示
     st.markdown(html, unsafe_allow_html=True)
-    st.markdown(md_text)
+    st.markdown(md_text, unsafe_allow_html=True)
 
 
 @st.cache_data(show_spinner=False)
