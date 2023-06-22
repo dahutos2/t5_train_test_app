@@ -1,3 +1,4 @@
+from typing import Tuple
 import streamlit as st
 import base64
 import markdown
@@ -38,13 +39,9 @@ __IMAGES_PATH = os.path.join(__executable_dir, "input", "images")
 
 def show():
     """.mdファイルをcssを適用して表示する"""
-    # CSSファイルを読み込む
-    scss = __file_to_text(__DESCRIPTION_FILE_SCSS)
-    # SCSSをCSSにコンパイル
-    css = sass.compile(string=scss)
 
-    # CSSを適用する
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    # CSS適用
+    _show_css_file()
 
     # アプリ説明
     __show_app_file()
@@ -62,16 +59,70 @@ def show():
     __show_dic_file()
 
 
+"""アプリ、T5、専門用語"""
+
+
 def __show_app_file() -> None:
-    md_text = __file_to_text(_DESCRIPTION_APP_FILE)
-    html = __convert_to_html(md_text)
+    html = __convert_to_html(_DESCRIPTION_APP_FILE)
 
     # StreamlitでHTMLを表示
     st.markdown(html, unsafe_allow_html=True)
 
 
+def __show_t5_file() -> None:
+    html = __convert_to_html(_DESCRIPTION_T5_FILE)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def __show_dic_file() -> None:
+    html = __convert_to_html(_DESCRIPTION_DIC_FILE)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+@st.cache_data(show_spinner=False)
+def __convert_to_html(file_path: str) -> str:
+    md_text = __file_to_text(file_path)
+
+    return __convert_to_styled_html(md_text)
+
+
+"""CSS"""
+
+
+def _show_css_file() -> None:
+    css = __convert_to_css(__DESCRIPTION_FILE_SCSS)
+
+    # CSSを適用する
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+
+@st.cache_data(show_spinner=False)
+def __convert_to_css(file_path: str) -> str:
+    # CSSファイルを読み込む
+    scss = __file_to_text(file_path)
+    # SCSSをCSSにコンパイル
+    css = sass.compile(string=scss)
+
+    return css
+
+
+"""モデル"""
+
+
 def __show_model_file() -> None:
-    md_text = __file_to_text(_DESCRIPTION_MODEL_FILE)
+    html = __convert_to_model(_DESCRIPTION_MODEL_FILE)
+
+    # StreamlitでHTMLを表示
+    st.markdown(html, unsafe_allow_html=True)
+
+
+@st.cache_data(show_spinner=False)
+def __convert_to_model(file_path: str) -> str:
+    md_text = __file_to_text(file_path)
 
     # 画像のパスを変換
     convert_image_dict = {
@@ -82,40 +133,35 @@ def __show_model_file() -> None:
     for original, replacement in convert_image_dict.items():
         md_text = md_text.replace(original, replacement)
 
-    html = __convert_to_html(md_text)
-
-    # StreamlitでHTMLを表示
-    st.markdown(html, unsafe_allow_html=True)
+    return __convert_to_styled_html(md_text)
 
 
-def __show_t5_file() -> None:
-    md_text = __file_to_text(_DESCRIPTION_T5_FILE)
-    html = __convert_to_html(md_text)
-
-    # StreamlitでHTMLを表示
-    st.markdown(html, unsafe_allow_html=True)
+"""T5数学"""
 
 
 def __show_math_file() -> None:
-    md_text = __file_to_text(_DESCRIPTION_MATH_FILE)
-
-    start_md_text = "\n### 数式一覧\n"
-    html = __convert_to_html(start_md_text)
+    md_text, html = __convert_to_math(_DESCRIPTION_MATH_FILE)
 
     # StreamlitでHTMLを表示
     st.markdown(html, unsafe_allow_html=True)
     st.markdown(md_text)
 
 
-def __show_dic_file() -> None:
-    md_text = __file_to_text(_DESCRIPTION_DIC_FILE)
-    html = __convert_to_html(md_text)
+@st.cache_data(show_spinner=False)
+def __convert_to_math(file_path: str) -> Tuple[str, str]:
+    md_text = __file_to_text(file_path)
 
-    # StreamlitでHTMLを表示
-    st.markdown(html, unsafe_allow_html=True)
+    start_md_text = "\n### 数式一覧\n"
+    # MarkdownをHTMLに変換
+    html = __convert_to_styled_html(start_md_text)
+
+    return md_text, html
 
 
-def __convert_to_html(md_text: str) -> str:
+"""共通メソッド"""
+
+
+def __convert_to_styled_html(md_text: str) -> str:
     # MarkdownをHTMLに変換
     html = markdown.markdown(
         md_text,
@@ -138,10 +184,6 @@ def __convert_to_html(md_text: str) -> str:
     return styled_html
 
 
-@st.cache_data(
-    show_spinner=False,
-    max_entries=5,
-)
 def __file_to_text(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as file:
         text = file.read()
